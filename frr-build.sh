@@ -1,0 +1,186 @@
+#!/bin/bash
+#
+# Copyright (C) 2022 Rafael Zalamena
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+# STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+# IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+usage() {
+  cat <<EOF
+Usage: $0
+  [-h] [--asan] [--doc] [--fpm] [--grpc] [--help] [--jobs=NUMBER]
+  [--minimal] [--scan-build] [--snmp] [--soft-clean] [--systemd]
+  [--tsan]
+
+Options:
+  --asan: build FRR with address sanitizer.
+  --tsan: build FRR with thread sanitizer.
+  --doc: configure FRR to enable documentation builds (requires sphinx).
+  --fpm: build FRR with forwarding plane manager.
+  --grpc: enable gRPC support.
+  --help or -h: this help message.
+  --jobs: amount of parallel build jobs (defaults to $jobs).
+  --scan-build: use clang static analyzer (compilation is way slower).
+  --snmp: build FRR with SNMP support.
+  --systemd: build FRR with systemd support.
+EOF
+  exit 1
+}
+
+source_dir="/usr/src/frr"
+build_dir="$source_dir/build"
+
+# Set variables.
+flags=()
+jobs=$(expr $(nproc))
+scan_build=no
+default_flags=(
+  --enable-multipath=64
+  --prefix=/usr
+  --localstatedir=/var/run/frr
+  --sysconfdir=/etc/frr
+  --sbindir=/usr/lib/frr
+  --enable-user=frr
+  --enable-group=frr
+  --enable-vty-group=frrvty
+  --enable-nhrpd
+  --enable-sharpd
+  --enable-configfile-mask=0640
+  --enable-logfile-mask=0640
+  --enable-dev-build
+  --with-pkg-git-version
+)
+
+longopts='asan,doc,fpm,grpc,help,jobs:,scan-build,snmp,tsan,systemd'
+shortopts='h'
+options=$(getopt -u --longoptions "$longopts" "$shortopts" $*)
+if [ $? -ne 0 ]; then
+  usage
+  exit 1
+fi
+
+set -- $options
+while [ $# -ne 0 ]; do
+  case "$1" in
+    --asan)
+      flags+=(--enable-address-sanitizer);
+      shift
+      ;;
+    --doc)
+      flags+=(--enable-doc)
+      flags+=(--enable-doc-html)
+      shift
+      ;;
+    --fpm)
+      flags+=(--enable-fpm)
+      shift
+      ;;
+    --grpc)
+      flags+=(--enable-grpc)
+      shift
+      ;;
+    --jobs)
+      jobs="$2"
+      shift 2
+      ;;
+    --scan-build)
+      scan_build=yes
+      shift
+      ;;
+    --snmp)
+      flags+=(--enable-snmp=agentx)
+      shift
+      ;;
+    --systemd)
+      flags+=(--enable-systemd)
+      shift
+      ;;
+    --tsan)
+      flags+=(--enable-thread-sanitizer);
+      shift
+      ;;
+    -h | --help)
+      usage
+      shift
+      ;;
+
+    --) shift ;;
+    *) echo "unhandled argument '$1'" 2>&1 ; exit 1 ;;
+  esac
+done
+
+# Include the defaults
+flags+=" ${default_flags[@]}"
+
+sync
+
+cd $source_dir
+
+# Bootstrap the configure file
+if [ ! -f configure ]; then
+  echo "=> Running bootstrap ..."
+  ./bootstrap.sh >/dev/null
+fi
+
+# Get into build outside of the source directory
+if [ ! -d $build_dir ]; then
+  mkdir -p $build_dir
+fi
+
+cd $build_dir
+
+# Configure if not configured
+if [ ! -f Makefile ]; then
+  echo "=> Running configure ..."
+  ../configure 'CXXFLAGS=-O0 -g -ggdb3' ${flags[@]}
+fi
+
+# Build
+if [ $scan_build = 'no' ]; then
+  make --jobs=$jobs >/dev/null
+else
+  scan-build make --jobs=$jobs >/dev/null
+fi
+
+# Install FRR binaries
+make install >/dev/null
+
+# Copy manual part
+if [ ! -d /var/log/frr ]; then
+  install -m 775 -o frr -g frr -d /var/log/frr
+fi
+
+if [ ! -d /etc/frr ]; then
+  install -m 775 -o frr -g frrvty -d /etc/frr
+  install -m 640 -o frr -g frrvty $source_dir/tools/etc/frr/vtysh.conf \
+    /etc/frr/vtysh.conf
+  install -m 640 -o frr -g frr $source_dir/tools/etc/frr/frr.conf \
+    /etc/frr/frr.conf
+  install -m 640 -o frr -g frr $source_dir/tools/etc/frr/daemons \
+    /etc/frr/daemons
+fi
+
+if [ -f $source_dir/tools/frr.service ]; then
+  install -m 644 $source_dir/tools/frr.service \
+    /etc/systemd/system/frr.service
+fi
+
+sync
+
+exit 0
