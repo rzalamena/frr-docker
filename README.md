@@ -37,7 +37,7 @@ docker run --interactive --tty --privileged --init \
   frr:dev
 
 # On a different terminal
-docket network create frr-net1
+docker network create frr-net1
 docker network connect frr-net1 frr-1
 docker network connect frr-net1 frr-2
 
