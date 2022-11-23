@@ -72,6 +72,7 @@ RUN apt update && apt install -y \
       python3-dev \
       python3-pytest \
       python3-pytest-xdist \
+      python3-scapy \
       python3-sphinx \
       sudo \
       tcpdump \
@@ -101,6 +102,9 @@ RUN curl -L https://bootstrap.pypa.io/pip/2.7/get-pip.py > /root/get-pip.py \
       && python2 /root/get-pip.py \
       && useradd -d /var/run/exabgp -s /bin/false exabgp \
       && python2 -m pip install 'exabgp<4.0.0'
+
+# Set python3 as default (required by `frr-reload.py` and `topotests`)
+RUN ln -sv /usr/bin/python3 /usr/bin/python
 
 COPY frr-start.sh /usr/sbin/frr-start.sh
 COPY frr-build.sh /usr/sbin/frr-build.sh
