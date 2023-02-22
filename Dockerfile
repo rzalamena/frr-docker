@@ -41,6 +41,9 @@ FROM ubuntu:22.04
 #   - net-tools
 #   - python3-pytest-xdist
 #   - python3-scapy
+#   - snmp
+#   - snmp-mibs-downloader
+#   - snmpd
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt install -y \
       bison \
@@ -74,12 +77,19 @@ RUN apt update && apt install -y \
       python3-pytest-xdist \
       python3-scapy \
       python3-sphinx \
+      snmp \
+      snmp-mibs-downloader \
+      snmpd \
       sudo \
       tcpdump \
       texinfo \
       tmux \
       valgrind \
       ;
+
+# Patch required SNMP MIB for topotest
+RUN curl -o /usr/share/snmp/mibs/ietf/SNMPv2-PDU \
+      http://pastebin.com/raw.php?i=p3QyuXzZ
 
 # Configure system for FRR privilege drop
 RUN groupadd -r -g 92 frr && \
