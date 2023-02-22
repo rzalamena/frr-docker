@@ -113,6 +113,20 @@ RUN curl -L https://bootstrap.pypa.io/pip/2.7/get-pip.py > /root/get-pip.py \
       && useradd -d /var/run/exabgp -s /bin/false exabgp \
       && python2 -m pip install 'exabgp<4.0.0'
 
+# Install topotest socat version
+RUN apt install -y yodl \
+      && git clone https://github.com/opensourcerouting/socat.git \
+      && cd /root/socat \
+      && echo "\"opensourcerouting/socat@`git rev-parse --short HEAD`\"" > VERSION \
+      && autoconf \
+      && ./configure \
+      && make -j $(nproc) \
+      && make install \
+      && cd /root \
+      && rm -rf socat \
+      && apt purge -y yodl \
+      ;
+
 # Set python3 as default (required by `frr-reload.py` and `topotests`)
 RUN ln -sv /usr/bin/python3 /usr/bin/python
 
