@@ -51,17 +51,17 @@ docker network connect frr-net1 frr-2
 (Re)building FRR
 ---
 
-If you changed the source code you'll want to run `frr-build.sh`. The build
+If you changed the source code you'll want to run `frr-build`. The build
 script builds and installs FRR using the sources found on `/usr/src/frr`.
 
-Run `frr-build.sh --help` for more information.
+Run `frr-build --help` for more information.
 
 
 Docker Image Details
 ---
 
-The default 'init' (initialization) script is `frr-start.sh`. It is called
-once on startup to setup the container environment (see `container-init.sh`)
+The default 'init' (initialization) script is `frr-start`. It is called
+once on startup to setup the container environment (see `container-init`)
 and start tmux as the main process (if it dies the container goes away with
 all process).
 
@@ -107,7 +107,7 @@ saved in `/var/log/frr/<daemon>.log`.
 In case of crashes you may check `/var/log/frr/<daemon>-<pid>` files
 since the container is configured to save them there by default.
 
-`frr-build.sh` by default uses dev builds which means the binaries will
+`frr-build` by default uses dev builds which means the binaries will
 have all symbols. This means you can debug FRR daemons with `gdb`.
 
 * Checking a core dump:

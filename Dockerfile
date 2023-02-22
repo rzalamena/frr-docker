@@ -130,7 +130,7 @@ RUN apt install -y yodl \
 # Set python3 as default (required by `frr-reload.py` and `topotests`)
 RUN ln -sv /usr/bin/python3 /usr/bin/python
 
-COPY frr-start.sh /usr/sbin/frr-start.sh
-COPY frr-build.sh /usr/sbin/frr-build.sh
-COPY container-init.sh /usr/sbin/container-init.sh
-ENTRYPOINT [ "/usr/sbin/frr-start.sh" ]
+COPY frr-start /usr/sbin/frr-start
+COPY frr-build /usr/sbin/frr-build
+COPY container-init /usr/sbin/container-init
+ENTRYPOINT [ "/usr/sbin/frr-start" ]

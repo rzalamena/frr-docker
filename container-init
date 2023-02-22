@@ -41,7 +41,7 @@ fi
 
 # Compile and install FRR
 if [ ! -f /usr/lib/frr/watchfrr.sh ]; then
-  /usr/sbin/frr-build.sh --asan --doc --fpm --grpc --snmp >/dev/null || true
+  /usr/sbin/frr-build --asan --doc --fpm --grpc --snmp >/dev/null || true
 fi
 
 # Configure core dumps
