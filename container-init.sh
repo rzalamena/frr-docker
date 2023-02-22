@@ -74,7 +74,7 @@ interfaces=$(ip link \
   | sed -r 's/^ +//g')
 
 for interface in $interfaces; do
-  ip addr flush dev $interface
+  ip -4 addr flush dev $interface
 done
 
 exit 0
