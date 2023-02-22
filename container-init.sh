@@ -58,6 +58,8 @@ sysctl kernel.core_pattern='/var/log/frr/%e-%P'
 sysctl net.ipv4.igmp_max_memberships=1000
 # Enable IPv6
 sysctl net.ipv6.conf.all.disable_ipv6=0
+# Set lower file limit so FRR uses less memory
+ulimit -n 1024
 
 # Bump tmux default history limit.
 if [ ! -f /root/.tmux.conf ]; then
