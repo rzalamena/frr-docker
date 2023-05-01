@@ -26,11 +26,13 @@ FROM ubuntu:22.04
 #   - libelf-dev
 #   - libgrpc++-dev (`--enable-grpc`: provides gRPC headers)
 #   - libjson-c-dev
+#   - libprotobuf-c-dev
 #   - libreadline-dev
 #   - libsnmp-dev (`--enable-snmp=agentx`)
 #   - libtool (pulls `autoconf` and `automake`)
 #   - libunwind-dev (for better back traces)
 #   - pkg-config (for configure and libyang build)
+#   - protobuf-c-compiler
 #   - protobuf-compiler-grpc (`--enable-grpc`: provides `protoc-gen-grpc`)
 #   - python3-dev
 #   - python3-pytest (topotests / make check)
@@ -63,6 +65,7 @@ RUN apt update && apt install -y \
       libgrpc++-dev \
       libjson-c-dev \
       libpcre2-dev \
+      libprotobuf-c-dev \
       libreadline-dev \
       libsnmp-dev \
       libtool \
@@ -70,6 +73,7 @@ RUN apt update && apt install -y \
       neovim \
       net-tools \
       pkg-config \
+      protobuf-c-compiler \
       protobuf-compiler-grpc \
       python2 \
       python3-dev \
@@ -78,8 +82,8 @@ RUN apt update && apt install -y \
       python3-scapy \
       python3-sphinx \
       snmp \
-      snmp-mibs-downloader \
       snmpd \
+      snmp-mibs-downloader \
       sudo \
       tcpdump \
       texinfo \
