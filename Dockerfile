@@ -109,7 +109,7 @@ RUN curl -L "https://github.com/CESNET/libyang/archive/refs/tags/v${LIBYANG_VERS
       | tar -xvzf - \
       && cd /root/libyang-${LIBYANG_VERSION} \
       && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -B build \
-      && make -C build install
+      && make -C build -j $(nproc) install
 
 # Install topotest dependencies
 RUN curl -L https://bootstrap.pypa.io/pip/2.7/get-pip.py > /root/get-pip.py \
