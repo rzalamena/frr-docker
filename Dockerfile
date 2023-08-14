@@ -114,7 +114,7 @@ RUN curl -L "https://github.com/CESNET/libyang/archive/refs/tags/v${LIBYANG_VERS
 # Install topotest dependencies
 RUN curl -L https://bootstrap.pypa.io/pip/2.7/get-pip.py > /root/get-pip.py \
       && python2 /root/get-pip.py \
-      && useradd -d /var/run/exabgp -s /bin/false exabgp \
+      && useradd -r -d /var/run/exabgp -s /bin/false exabgp \
       && python2 -m pip install 'exabgp<4.0.0'
 
 # Install topotest socat version
