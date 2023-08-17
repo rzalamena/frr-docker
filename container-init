@@ -60,7 +60,7 @@ sysctl net.ipv4.igmp_max_memberships=1000
 sysctl net.ipv6.conf.all.disable_ipv6=0
 # Set lower file limit so FRR uses less memory
 if [ ! -f /etc/profile.d/ulimits.sh ]; then
-  echo 'ulimit -n 4096' > /etc/profile.d/ulimits.sh
+  echo 'ulimit -n 16384' > /etc/profile.d/ulimits.sh
   chmod a+x /etc/profile.d/ulimits.sh
 fi
 
