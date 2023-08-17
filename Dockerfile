@@ -93,7 +93,7 @@ RUN apt update && apt install -y \
 
 # Patch required SNMP MIB for topotest
 RUN curl -o /usr/share/snmp/mibs/ietf/SNMPv2-PDU \
-      http://pastebin.com/raw.php?i=p3QyuXzZ
+      https://raw.githubusercontent.com/FRRouting/frr-mibs/main/ietf/SNMPv2-PDU
 
 # Configure system for FRR privilege drop
 RUN groupadd -r -g 92 frr && \
@@ -133,6 +133,9 @@ RUN apt install -y yodl \
 
 # Set python3 as default (required by `frr-reload.py` and `topotests`)
 RUN ln -sv /usr/bin/python3 /usr/bin/python
+
+# Install simulator build dependencies
+RUN apt update && apt install -y libevent-dev
 
 COPY frr-start /usr/sbin/frr-start
 COPY frr-build /usr/sbin/frr-build
