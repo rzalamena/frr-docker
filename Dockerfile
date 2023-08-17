@@ -93,7 +93,7 @@ RUN apt update && apt install -y \
 
 # Patch required SNMP MIB for topotest
 RUN curl -o /usr/share/snmp/mibs/ietf/SNMPv2-PDU \
-      http://pastebin.com/raw.php?i=p3QyuXzZ
+      https://raw.githubusercontent.com/FRRouting/frr-mibs/main/ietf/SNMPv2-PDU
 
 # Configure system for FRR privilege drop
 RUN groupadd -r -g 92 frr && \
