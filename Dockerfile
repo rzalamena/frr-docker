@@ -9,7 +9,7 @@ FROM ubuntu:22.04
 #   - tcpdump
 # - Debugging tools:
 #   - gdb
-#   - neovim
+#   - vim
 #   - tmux
 #   - valgrind
 # - Build dependencies (libyang):
@@ -70,7 +70,7 @@ RUN apt update && apt install -y \
       libsnmp-dev \
       libtool \
       libunwind-dev \
-      neovim \
+      vim \
       net-tools \
       pkg-config \
       protobuf-c-compiler \
