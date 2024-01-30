@@ -30,7 +30,7 @@ session="frr-run"
 tmux new-session -d -s $session
 
 tmux rename-window -t $session:0 'vtysh'
-tmux send-keys -t 'vtysh' '/usr/lib/frr/watchfrr.sh start' C-m
+tmux send-keys -t 'vtysh' '/usr/lib/frr/frrinit.sh start' C-m
 tmux select-window -t $session:0
 
 exec tmux attach -t frr-run
