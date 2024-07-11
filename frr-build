@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2022 Rafael Zalamena
+# Copyright (C) 2022-2024 Rafael Zalamena
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -25,8 +25,7 @@ usage() {
   cat <<EOF
 Usage: $0
   [-h] [--asan] [--doc] [--fpm] [--grpc] [--help] [--jobs=NUMBER]
-  [--minimal] [--scan-build] [--snmp] [--soft-clean] [--systemd]
-  [--tsan]
+  [--scan-build] [--snmp] [--tsan]
 
 Options:
   --asan: build FRR with address sanitizer.
@@ -38,7 +37,6 @@ Options:
   --jobs: amount of parallel build jobs (defaults to $jobs).
   --scan-build: use clang static analyzer (compilation is way slower).
   --snmp: build FRR with SNMP support.
-  --systemd: build FRR with systemd support.
 EOF
   exit 1
 }
@@ -67,7 +65,7 @@ default_flags=(
   --with-pkg-git-version
 )
 
-longopts='asan,doc,fpm,grpc,help,jobs:,scan-build,snmp,tsan,systemd'
+longopts='asan,doc,fpm,grpc,help,jobs:,scan-build,snmp,tsan'
 shortopts='h'
 options=$(getopt -u --longoptions "$longopts" "$shortopts" $*)
 if [ $? -ne 0 ]; then
@@ -105,10 +103,6 @@ while [ $# -ne 0 ]; do
       ;;
     --snmp)
       flags+=(--enable-snmp=agentx)
-      shift
-      ;;
-    --systemd)
-      flags+=(--enable-systemd)
       shift
       ;;
     --tsan)
