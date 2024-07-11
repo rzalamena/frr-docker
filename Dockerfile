@@ -104,7 +104,7 @@ RUN groupadd -r -g 92 frr && \
 
 # Build and install libyang
 WORKDIR /root
-ARG LIBYANG_VERSION='2.1.80'
+ARG LIBYANG_VERSION='2.1.128'
 RUN curl -L "https://github.com/CESNET/libyang/archive/refs/tags/v${LIBYANG_VERSION}.tar.gz" \
       | tar -xvzf - \
       && cd /root/libyang-${LIBYANG_VERSION} \
