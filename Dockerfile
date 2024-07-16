@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM debian:12
 
 # Install commonly needed tools.
 # - Networking tools:
@@ -9,9 +9,9 @@ FROM ubuntu:22.04
 #   - tcpdump
 # - Debugging tools:
 #   - gdb
-#   - vim
 #   - tmux
 #   - valgrind
+#   - vim
 # - Build dependencies (libyang):
 #   - build-essential
 #   - cmake
@@ -41,13 +41,15 @@ FROM ubuntu:22.04
 #   - texinfo
 # - Topotest dependencies:
 #   - net-tools
+#   - python3-exabgp
 #   - python3-pytest-xdist
 #   - python3-scapy
 #   - snmp
-#   - snmp-mibs-downloader
 #   - snmpd
+#   - snmp-mibs-downloader
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt update && apt install -y \
+RUN sed -i 's/^Components: main$/& contrib non-free/' /etc/apt/sources.list.d/debian.sources \
+      && apt update && apt install -y \
       bison \
       build-essential \
       cmake \
@@ -70,13 +72,12 @@ RUN apt update && apt install -y \
       libsnmp-dev \
       libtool \
       libunwind-dev \
-      vim \
       net-tools \
       pkg-config \
       protobuf-c-compiler \
       protobuf-compiler-grpc \
-      python2 \
       python3-dev \
+      python3-exabgp \
       python3-pytest \
       python3-pytest-xdist \
       python3-scapy \
@@ -89,6 +90,7 @@ RUN apt update && apt install -y \
       texinfo \
       tmux \
       valgrind \
+      vim \
       ;
 
 # Patch required SNMP MIB for topotest
@@ -111,12 +113,6 @@ RUN curl -L "https://github.com/CESNET/libyang/archive/refs/tags/v${LIBYANG_VERS
       && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -B build \
       && make -C build -j $(nproc) install
 
-# Install topotest dependencies
-RUN curl -L https://bootstrap.pypa.io/pip/2.7/get-pip.py > /root/get-pip.py \
-      && python2 /root/get-pip.py \
-      && useradd -r -d /var/run/exabgp -s /bin/false exabgp \
-      && python2 -m pip install 'exabgp<4.0.0'
-
 # Install topotest socat version
 RUN apt install -y yodl \
       && git clone https://github.com/opensourcerouting/socat.git \
@@ -130,6 +126,9 @@ RUN apt install -y yodl \
       && rm -rf socat \
       && apt purge -y yodl \
       ;
+
+# Create exabgp user for topotest
+RUN useradd -r -d /var/run/exabgp -s /bin/false exabgp
 
 # Set python3 as default (required by `frr-reload.py` and `topotests`)
 RUN ln -sv /usr/bin/python3 /usr/bin/python
