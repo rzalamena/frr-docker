@@ -40,13 +40,8 @@ EOF
 }
 
 source_dir="/usr/src/frr"
-build_dir="$source_dir/build"
 
-# Set variables.
-flags=()
-jobs=$(expr $(nproc))
-scan_build=no
-default_flags=(
+flags=(
   --enable-multipath=64
   --prefix=/usr
   --localstatedir=/var/run/frr
@@ -62,6 +57,8 @@ default_flags=(
   --enable-dev-build
   --with-pkg-git-version
 )
+jobs=$(expr $(nproc))
+scan_build=no
 
 longopts='asan,doc,fpm,grpc,help,jobs:,scan-build,snmp,tsan'
 shortopts='h'
@@ -117,25 +114,13 @@ while [ $# -ne 0 ]; do
   esac
 done
 
-# Include the defaults
-flags+=" ${default_flags[@]}"
-
-sync
-
 cd $source_dir
 
 # Bootstrap the configure file
 if [ ! -f configure ]; then
   echo "=> Running bootstrap ..."
-  ./bootstrap.sh >/dev/null
+  ./bootstrap.sh
 fi
-
-# Get into build outside of the source directory
-if [ ! -d $build_dir ]; then
-  mkdir -p $build_dir
-fi
-
-cd $build_dir
 
 # Configure if not configured
 if [ ! -f Makefile ]; then
