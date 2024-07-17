@@ -64,7 +64,7 @@ fi
 
 # Remove all docker addresses from non Internet interface.
 interfaces=$(ip link \
-  | egrep "eth[1-9]+" \
+  | grep -E "eth[1-9]+" \
   | cut -d ':' -f 2 \
   | cut -d '@' -f 1 \
   | sed -r 's/^ +//g')
