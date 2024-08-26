@@ -130,7 +130,7 @@ fi
 
 # Build
 if [ $scan_build = 'no' ]; then
-  bear -- make --jobs=$jobs >/dev/null
+  make --jobs=$jobs >/dev/null
 else
   scan-build make --jobs=$jobs >/dev/null
 fi

@@ -6,7 +6,6 @@ FROM fedora:40
 #   - iputils
 #   - tcpdump
 # - Development / debugging tools:
-#   - bear (to generate `compile_commands.json`)
 #   - clang-analyzer (to run `scan-build`)
 #   - gdb
 #   - libasan
@@ -40,7 +39,6 @@ FROM fedora:40
 #   - procps-ng
 RUN echo 'fastestmirror=True' >> /etc/dnf/dnf.conf \
       && dnf install -y \
-        bear \
         bison \
         c-ares-devel \
         clang-analyzer \
