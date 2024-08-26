@@ -125,7 +125,7 @@ fi
 # Configure if not configured
 if [ ! -f Makefile ]; then
   echo "=> Running configure ..."
-  ./configure 'CFLAGS=-Wno-attributes' 'CXXFLAGS=-O0 -g -ggdb3' ${flags[@]}
+  ./configure 'CFLAGS=-Wno-attributes -g' 'CXXFLAGS=-O0 -g' ${flags[@]}
 fi
 
 # Build
