@@ -30,7 +30,9 @@ FROM fedora:40
 #   - libunwind-devel (for better back traces)
 #   - net-snmp-devel (`--enable-snmp=agentx`)
 #   - patch (used by build system)
+#   - protobuf-c-devel
 #   - python3-devel
+#   - python3-pytest (needed by `make check`)
 #   - python3-sphinx (`--enable-doc`)
 #   - readline-devel
 #   - texinfo (required for man pages)
@@ -39,38 +41,51 @@ FROM fedora:40
 #   - procps-ng
 RUN echo 'fastestmirror=True' >> /etc/dnf/dnf.conf \
       && dnf install -y \
-        bison \
-        c-ares-devel \
-        clang-analyzer \
-        cmake \
-        diffutils \
-        elfutils-libelf-devel \
-        flex \
-        gcc-c++ \
-        gdb \
-        git \
-        grpc-devel \
-        iproute \
-        iputils \
-        json-c-devel \
-        libasan \
-        libcap-devel \
-        libtool \
-        libunwind-devel \
-        net-snmp-devel \
-        patch \
-        pcre2-devel \
-        procps-ng \
-        python3-devel \
-        python3-sphinx \
-        readline-devel \
-        tcpdump \
-        texinfo \
-        tmux \
-        valgrind \
-        vim \
-        which \
-      ;
+           bison \
+           c-ares-devel \
+           clang-analyzer \
+           cmake \
+           diffutils \
+           elfutils-libelf-devel \
+           flex \
+           gcc-c++ \
+           gdb \
+           git \
+           grpc-devel \
+           iproute \
+           iputils \
+           json-c-devel \
+           libasan \
+           libcap-devel \
+           libtool \
+           libunwind-devel \
+           net-snmp-devel \
+           patch \
+           pcre2-devel \
+           procps-ng \
+           protobuf-c-devel \
+           python3-devel \
+           python3-pytest \
+           python3-sphinx \
+           readline-devel \
+           tcpdump \
+           texinfo \
+           tmux \
+           valgrind \
+           vim \
+           which \
+      && dnf debuginfo-install -y \
+           glibc \
+           json-c \
+           libasan \
+           libcap \
+           libgcc \
+           libstdc++ \
+           libunwind \
+           libxcrypt \
+           pcre2 \
+           systemd-libs \
+           ;
 
 # Configure system for FRR privilege drop
 RUN groupadd -r -g 92 frr \
@@ -88,8 +103,6 @@ RUN curl -L "https://github.com/CESNET/libyang/archive/refs/tags/v${LIBYANG_VERS
       && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -B build \
       && make -C build -j $(nproc) install
 
-# Set python3 as default (required by `frr-reload.py` and `topotests`)
-RUN ln -sv /usr/bin/python3 /usr/bin/python
 
 COPY frr-start /usr/sbin/frr-start
 COPY frr-build /usr/sbin/frr-build
