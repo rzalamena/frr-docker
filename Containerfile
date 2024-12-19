@@ -41,6 +41,7 @@ FROM fedora:41
 #   - procps-ng
 # - Topotest dependencies
 #   - hostname
+#   - python3-exabgp
 #   - python3-pytest-asyncio
 RUN echo 'fastestmirror=True' >> /etc/dnf/dnf.conf \
       && dnf install -y \
@@ -69,6 +70,7 @@ RUN echo 'fastestmirror=True' >> /etc/dnf/dnf.conf \
            procps-ng \
            protobuf-c-devel \
            python3-devel \
+           python3-exabgp \
            python3-pytest \
            python3-pytest-asyncio \
            python3-sphinx \
@@ -108,6 +110,8 @@ RUN curl -L "https://github.com/CESNET/libyang/archive/refs/tags/v${LIBYANG_VERS
       && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -B build \
       && make -C build -j $(nproc) install
 
+# Topotest ExaBGP user
+RUN adduser --system --home /var/empty --shell /sbin/nologin exabgp
 
 COPY frr-start /usr/sbin/frr-start
 COPY frr-build /usr/sbin/frr-build
