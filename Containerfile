@@ -1,4 +1,4 @@
-FROM fedora:40
+FROM fedora:41
 
 # Install commonly needed tools.
 # - Networking tools:
@@ -39,6 +39,9 @@ FROM fedora:40
 #   - which (`--enable-grpc`: used by build system to find protoc-gen-grpc)
 # - Watchfrr run time dependencies:
 #   - procps-ng
+# - Topotest dependencies
+#   - hostname
+#   - python3-pytest-asyncio
 RUN echo 'fastestmirror=True' >> /etc/dnf/dnf.conf \
       && dnf install -y \
            bison \
@@ -52,6 +55,7 @@ RUN echo 'fastestmirror=True' >> /etc/dnf/dnf.conf \
            gdb \
            git \
            grpc-devel \
+           hostname \
            iproute \
            iputils \
            json-c-devel \
@@ -66,6 +70,7 @@ RUN echo 'fastestmirror=True' >> /etc/dnf/dnf.conf \
            protobuf-c-devel \
            python3-devel \
            python3-pytest \
+           python3-pytest-asyncio \
            python3-sphinx \
            readline-devel \
            tcpdump \
