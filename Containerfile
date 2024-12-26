@@ -1,4 +1,4 @@
-FROM debian:12
+FROM ubuntu:24.04
 
 # Install commonly needed tools.
 # - Networking tools:
@@ -48,8 +48,7 @@ FROM debian:12
 #   - snmpd
 #   - snmp-mibs-downloader
 ARG DEBIAN_FRONTEND=noninteractive
-RUN sed -i 's/^Components: main$/& contrib non-free/' /etc/apt/sources.list.d/debian.sources \
-      && apt update && apt install -y \
+RUN apt update && apt install -y \
       bison \
       build-essential \
       cmake \
