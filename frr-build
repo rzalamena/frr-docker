@@ -125,7 +125,7 @@ fi
 # Configure if not configured
 if [ ! -f Makefile ]; then
   echo "=> Running configure ..."
-  ../configure 'CXXFLAGS=-O0 -g -ggdb3' ${flags[@]}
+  ./configure 'CFLAGS=-g' 'CXXFLAGS=-g' ${flags[@]}
 fi
 
 # Build
