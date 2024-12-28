@@ -42,6 +42,7 @@ FROM ubuntu:24.04
 # - Topotest dependencies:
 #   - net-tools
 #   - python3-exabgp
+#   - python3-pytest-asyncio
 #   - python3-pytest-xdist
 #   - python3-scapy
 #   - snmp
@@ -78,6 +79,7 @@ RUN apt update && apt install -y \
       python3-dev \
       python3-exabgp \
       python3-pytest \
+      python3-pytest-asyncio \
       python3-pytest-xdist \
       python3-scapy \
       python3-sphinx \
