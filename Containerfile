@@ -6,7 +6,6 @@ FROM fedora:41
 #   - iputils
 #   - tcpdump
 # - Development / debugging tools:
-#   - clang-analyzer (to run `scan-build`)
 #   - gdb
 #   - libasan
 #   - tmux
@@ -44,7 +43,6 @@ RUN echo 'fastestmirror=True' >> /etc/dnf/dnf.conf \
       && dnf install -y \
            bison \
            c-ares-devel \
-           clang-analyzer \
            diffutils \
            elfutils-libelf-devel \
            flex \
