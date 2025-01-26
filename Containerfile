@@ -12,9 +12,6 @@ FROM fedora:41
 #   - tmux
 #   - valgrind
 #   - vim
-# - Build dependencies (libyang):
-#   - cmake
-#   - pcre2-devel
 # - Build dependencies (frr):
 #   - bison
 #   - c-ares-devel
@@ -48,7 +45,6 @@ RUN echo 'fastestmirror=True' >> /etc/dnf/dnf.conf \
            bison \
            c-ares-devel \
            clang-analyzer \
-           cmake \
            diffutils \
            elfutils-libelf-devel \
            flex \
@@ -64,9 +60,9 @@ RUN echo 'fastestmirror=True' >> /etc/dnf/dnf.conf \
            libcap-devel \
            libtool \
            libunwind-devel \
+           libyang-devel \
            net-snmp-devel \
            patch \
-           pcre2-devel \
            procps-ng \
            protobuf-c-devel \
            python3-devel \
@@ -90,6 +86,7 @@ RUN echo 'fastestmirror=True' >> /etc/dnf/dnf.conf \
            libstdc++ \
            libunwind \
            libxcrypt \
+           libyang \
            pcre2 \
            systemd-libs \
            ;
@@ -101,17 +98,11 @@ RUN groupadd -r -g 92 frr \
            --comment "FRR suite" --shell /sbin/nologin frr \
       && usermod -a -G frrvty frr
 
-# Build and install libyang
-WORKDIR /root
-ARG LIBYANG_VERSION='2.1.128'
-RUN curl -L "https://github.com/CESNET/libyang/archive/refs/tags/v${LIBYANG_VERSION}.tar.gz" \
-      | tar -xvzf - \
-      && cd /root/libyang-${LIBYANG_VERSION} \
-      && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -B build \
-      && make -C build -j $(nproc) install
-
 # Topotest ExaBGP user
 RUN adduser --system --home /var/empty --shell /sbin/nologin exabgp
+
+# Set default directory
+WORKDIR /root
 
 COPY frr-start /usr/sbin/frr-start
 COPY frr-build /usr/sbin/frr-build
