@@ -45,8 +45,6 @@ if [ ! -f /root/.limits_configured ]; then
 fi
 
 # Always reconfigure sysctls
-# Configure core dumps
-sysctl kernel.core_pattern='/var/log/frr/%e-%P'
 # Bump IGMP group membership count (needed for 3+ interfaces)
 sysctl net.ipv4.igmp_max_memberships=1000
 # Enable IPv6

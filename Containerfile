@@ -114,25 +114,9 @@ RUN curl -L "https://github.com/CESNET/libyang/archive/refs/tags/v${LIBYANG_VERS
       && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -B build \
       && make -C build -j $(nproc) install
 
-# Install topotest socat version
-RUN apt install -y yodl \
-      && git clone https://github.com/opensourcerouting/socat.git \
-      && cd /root/socat \
-      && echo "\"opensourcerouting/socat@`git rev-parse --short HEAD`\"" > VERSION \
-      && autoconf \
-      && ./configure \
-      && make -j $(nproc) \
-      && make install \
-      && cd /root \
-      && rm -rf socat \
-      && apt purge -y yodl \
-      ;
-
 # Create exabgp user for topotest
 RUN useradd -r -d /var/run/exabgp -s /bin/false exabgp
 
-# Set python3 as default (required by `frr-reload.py` and `topotests`)
-RUN ln -sv /usr/bin/python3 /usr/bin/python
 
 COPY frr-start /usr/sbin/frr-start
 COPY frr-build /usr/sbin/frr-build
